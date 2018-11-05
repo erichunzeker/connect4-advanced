@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Game Board {{ super() }}{% endblock %}
+
+{% block content %}
+<h1>{{players[0].username}} vs {{players[1].username}}</h1>
+
+<div id="gameboard">
+
+</div>
+
+{% endblock %}

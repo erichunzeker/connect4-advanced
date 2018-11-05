@@ -1,5 +1,5 @@
-from flask import Flask
-from models import db
+from flask import Flask, request, session, render_template
+from models import db, Player
 from datetime import datetime
 import os
 
@@ -15,7 +15,8 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    return "Hello World!"
+    players = db.session.query(Player).all()
+    return render_template("game.html", players=players, content="Hello World")
 
 
 # CLI Commands
@@ -25,12 +26,26 @@ def init_db():
     db.drop_all()
     db.create_all()
 
+    print("Initialized Connect 4 Database.")
+
 
 @app.cli.command("devinit")
 def init_dev_data():
     """Initializes database with data for development and testing"""
     db.drop_all()
     db.create_all()
+    print("Initialized Connect 4 Database.")
+
+    p1 = Player(username='tow')
+    p2 = Player(username='twaits')
+
+    db.session.add(p1)
+    print("Created %s" % p1.username)
+    db.session.add(p2)
+    print("Created %s" % p2.username)
+
+    db.session.commit()
+    print("Added dummy data.")
 
 
 if __name__ == "__main__":
