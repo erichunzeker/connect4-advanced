@@ -1,12 +1,35 @@
 {% extends 'base.html' %}
 
+
 {% block title %}Game Board {{ super() }}{% endblock %}
 
+
 {% block content %}
-<h1>{{players[0].username}} vs {{players[1].username}}</h1>
+<h1 id="title">{{ game.game_title() }}</h1>
 
-<div id="gameboard">
+<a href="{{ url_for("home")}}">Home</a>
 
+<div id="gamestats">
+    <p class='gamestat'>Turn: <span id='gameturn'>{{ game.turn }}</span></p>
+</div>
+<div id="gamedisplay">
+    <div id="p1-display" class="player-display"></div>
+    <div id="gameboard"></div>
+    <div id="p2-display" class="player-display"></div>
 </div>
 
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+var isP1First = new Date('{{game.player_one.birthday}}') < new Date('{{game.player_one.birthday}}');
+
+var game = new Connect4(
+    new Player('{{game.player_one.username}}', '{{game.player_one.birthday}}', parseInt('{{game.player_one.id}}'), isP1First),
+    new Player('{{game.player_two.username}}', '{{game.player_two.birthday}}', parseInt('{{game.player_two.id}}'), !isP1First),
+    parseInt('{{game.id}}')
+);
+</script>
 {% endblock %}

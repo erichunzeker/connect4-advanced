@@ -1,6 +1,6 @@
-from flask import Flask, request, session, render_template
-from models import db, Player
-from datetime import datetime
+from flask import Flask, request, session, render_template, abort
+from models import db, Player, Game
+import datetime
 import os
 
 app = Flask(__name__)
@@ -15,8 +15,18 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    players = db.session.query(Player).all()
-    return render_template("game.html", players=players, content="Hello World")
+    games = db.session.query(Game).all()
+    return render_template("landing.html", games=games)
+
+
+@app.route("/game/<game_id>/")
+def game(game_id=None):
+    if game_id:
+        game = db.session.query(Game).get(game_id)
+        return render_template("game.html", game=game)
+
+    return abort(404)
+
 
 
 # CLI Commands
@@ -36,13 +46,19 @@ def init_dev_data():
     db.create_all()
     print("Initialized Connect 4 Database.")
 
-    p1 = Player(username='tow')
-    p2 = Player(username='twaits')
+    g = Game()
+    db.session.add(g)
+
+    p1 = Player(username="tow", birthday=datetime.datetime.strptime('11/06/1991', '%m/%d/%Y').date())
+    p2 = Player(username="twaits", birthday=datetime.datetime.strptime('01/14/1987', '%m/%d/%Y').date())
 
     db.session.add(p1)
     print("Created %s" % p1.username)
     db.session.add(p2)
     print("Created %s" % p2.username)
+
+    g.player_one = p1
+    g.player_two = p2
 
     db.session.commit()
     print("Added dummy data.")

@@ -1,3 +1,70 @@
+/*
+ * Yellow: #F3B129
+ * Red: #F12522
+ * Blue: #03A1DA
+ * Green: #86BF28
+ * Lime: #CEDA07
+ */
+
 html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+div#gamedisplay {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+}
+
+table#connect-table {
+    border: 10px solid #03A1DA;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+td.token {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background-color: #F3B129;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 46px 46px;
+}
+
+td.token-white {
+    background-image: url('/static/images/white-circle.png');
+}
+
+td.token-red {
+    background-image: url('/static/images/red-circle.png');
+}
+
+td.token-black {
+    background-image: url('/static/images/black-circle.png');
+}
+
+td.token-hover {
+    background-color: #86BF28;
+    cursor: pointer;
+}
+
+ul.player-data {
+    list-style: none;
+}
+
+ul.player-data li {
+    margin-bottom: 3px;
+    padding: 3px;
+}
+
+li.current-player {
+    background-color: #86BF28;
+    border-radius: 5px;
+}
+
+li.winner {
+    border: 2px solid #F12522;
+    border-radius: 5px;
 }
