@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login {{ super() }}{% endblock %}
+
+{% block body %}
+<h2>Login</h2>
+{% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+
+
+{% block content %}
+<form action="{{ url_for('new_game') }}" method="post">
+    <dl>
+        <dt>Player :
+        <dd><input type="text" name="name">
+        <input type="submit" value="Login">
+    </dl>
+</form>
+
+{% endblock %}
+
+{% endblock %}

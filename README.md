@@ -1,7 +1,7 @@
-# Connect 4 II: The Revenge-- <Replace with your name>
+# Connect 4 II: The Revenge-- Eric Hunzeker
 
-Name: <Full Name>
-Pitt ID: <ID>
+Name: Eric Hunzeker
+Pitt ID: emh128
 
 ## Installation
 

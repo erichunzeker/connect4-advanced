@@ -1,4 +1,4 @@
-from flask import Flask, request, session, render_template, abort
+from flask import Flask, request, session, render_template, abort, redirect, url_for, flash
 from models import db, Player, Game
 import datetime
 import os
@@ -10,13 +10,21 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
 # Suppress deprecation warning
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+app.config.update(dict(
+    DEBUG=True,
+    SECRET_KEY='development key',
+
+    SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'connect4.db')
+))
+
 db.init_app(app)
 
 
 @app.route("/")
 def home():
+    highscores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     games = db.session.query(Game).all()
-    return render_template("landing.html", games=games)
+    return render_template("landing.html", games=games, highscores=highscores)
 
 
 @app.route("/game/<game_id>/")
@@ -27,6 +35,62 @@ def game(game_id=None):
 
     return abort(404)
 
+
+@app.route("/newgame", methods=['GET', 'POST'])
+def new_game():
+    error = None
+    if request.method == 'POST':
+        g = Game()
+        db.session.add(g)
+
+        p1 = Player.query.filter(Player.username == session['username']).first()
+        p2 = Player.query.filter(Player.username == request.form['name']).first()
+
+        print(p1)
+        print(p2)
+
+        g.player_one = p1
+        g.player_two = p2
+
+        db.session.commit()
+
+        return redirect(url_for('game', game_id=g.id))
+    return render_template('newgame.html', error=error)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        players = Player.query.all()
+        for player in players:
+            if request.form['name'] == player.username:
+                session['logged_in'] = True
+                session['username'] = request.form['name']
+                flash('You were logged in')
+                return redirect(url_for('home'))
+        flash("couldn't find you lel")
+    return render_template('login.html', error=error)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    error = None
+    if request.method == 'POST':
+        bday = request.form['birthday']
+
+        print(bday)
+        p1 = Player(username=request.form['name'], birthday=datetime.datetime.strptime(bday, "%Y-%m-%d").date())
+        print(p1.birthday)
+        db.session.add(p1)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('register.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('home'))
 
 
 # CLI Commands

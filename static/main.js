@@ -18,7 +18,7 @@ function Connect4(p1, p2, gameId) {
     this.p2 = p2;
     this.turn = 1;
 
-    this.tokenState = []
+    this.tokenState = [];
 
     this.gameOver = false;
 
@@ -265,7 +265,7 @@ function Connect4(p1, p2, gameId) {
 
         var table = document.createElement('table');
         var newGame = this.tokenState.length === 0;
-        table.id = 'connect-table'
+        table.id = 'connect-table';
         rows = 6;
         columns = 7;
 
