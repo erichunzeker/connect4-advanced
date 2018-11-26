@@ -68,3 +68,12 @@ li.winner {
     border: 2px solid #F12522;
     border-radius: 5px;
 }
+
+.community, .personal {
+    float: left;
+    padding-right: 2%;
+}
+
+.games {
+    clear: both;
+}

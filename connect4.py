@@ -24,11 +24,18 @@ db.init_app(app)
 def home():
     highscores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     games = db.session.query(Game).all()
+    if session.get('logged_in'):
+        for game in games:
+            if session['username'] != game.player_one.username and session['username'] != game.player_two.username:
+                games.remove(game)
+    print(games)
     return render_template("landing.html", games=games, highscores=highscores)
 
 
 @app.route("/game/<game_id>/")
 def game(game_id=None):
+    if not session.get('logged_in'):
+        abort(401)
     if game_id:
         game = db.session.query(Game).get(game_id)
         return render_template("game.html", game=game)
@@ -90,6 +97,7 @@ def register():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
+    session.pop('username', None)
     return redirect(url_for('home'))
 
 
