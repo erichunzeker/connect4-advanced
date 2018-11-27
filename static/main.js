@@ -227,6 +227,8 @@ function Connect4(p1, p2, gameId) {
                 winText = winText + ": " + this.p2.name + " Wins!";
             }
 
+            var score = 21 - this.tokensRemaining;
+
             document.getElementById('title').textContent = winText;
         }
     }
@@ -321,4 +323,5 @@ function Connect4(p1, p2, gameId) {
             document.getElementById('gameturn').textContent = self.turn;
         }
     }(this));
+
 }

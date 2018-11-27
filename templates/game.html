@@ -28,6 +28,9 @@ var game = new Connect4(
     new Player('{{game.player_one.username}}', '{{game.player_one.birthday}}', parseInt('{{game.player_one.id}}'), isP1First),
     new Player('{{game.player_two.username}}', '{{game.player_two.birthday}}', parseInt('{{game.player_two.id}}'), !isP1First),
     parseInt('{{game.id}}')
+
 );
+
+
 </script>
 {% endblock %}

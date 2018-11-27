@@ -41,7 +41,18 @@
         {% if games %}
             <ul>
                 {% for game in games %}
-                    <li><a href="{{ url_for('game', game_id = game.id) }}">{{ game.game_title() }}</a></li>
+                    {% if game.game_over == true %}
+                        <li><p>won</p></li>
+                    {% else %}
+                    <li><a href="{{ url_for('game', game_id = game.id) }}">{{ game.game_title() }}</a>
+                    {% if game.player_one.username == player %}
+                        <form action="{{ url_for('delete_game', game_id=game.id) }}" method="post">
+                             <input type="submit" value="delete">
+                        </form>
+                    {% endif %}
+
+                    </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         {% else %}

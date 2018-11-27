@@ -7,6 +7,7 @@ db = SQLAlchemy()
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(20), nullable=False)
     birthday = db.Column(db.Date, nullable=False)
 
     def birthday_format(self, format=None):
@@ -26,6 +27,7 @@ class Game(db.Model):
     turn = db.Column(db.Integer, nullable=False, default=0)
     game_over = db.Column(db.Boolean, nullable=False, default=False)
     winner_id = db.Column(db.Integer, db.ForeignKey('player.id'))
+    board_string = db.Column(db.String, nullable=False)
 
     player_one = db.relationship('Player', foreign_keys=[player_one_id], backref='games_player_one')
     player_two = db.relationship('Player', foreign_keys=[player_two_id], backref='games_player_two')

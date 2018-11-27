@@ -22,14 +22,20 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    highscores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    highscores = []
     games = db.session.query(Game).all()
+
     if session.get('logged_in'):
-        for game in games:
-            if session['username'] != game.player_one.username and session['username'] != game.player_two.username:
-                games.remove(game)
+       newgames = [game for game in games if session['username'] == game.player_one.username or session['username'] == game.player_two.username]
+    else:
+        newgames = games
     print(games)
-    return render_template("landing.html", games=games, highscores=highscores)
+
+    if session.get('logged_in'):
+        playa = session['username']
+    else:
+        playa = None
+    return render_template("landing.html", games=newgames, highscores=highscores, player=playa)
 
 
 @app.route("/game/<game_id>/")
@@ -65,19 +71,34 @@ def new_game():
     return render_template('newgame.html', error=error)
 
 
+@app.route("/deletegame/<game_id>", methods=['GET', 'POST'])
+def delete_game(game_id=None):
+    if request.method == "POST":
+        game = Game.query.filter(Game.id == game_id).first()
+        print(game.id)
+        print(game_id)
+        print(game)
+        db.session.delete(game)
+        db.session.commit()
+
+        return redirect(url_for('home'))
+    return render_template('landing.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         players = Player.query.all()
         for player in players:
-            if request.form['name'] == player.username:
+            if request.form['name'] == player.username and request.form['password'] == player.password:
                 session['logged_in'] = True
                 session['username'] = request.form['name']
                 flash('You were logged in')
                 return redirect(url_for('home'))
         flash("couldn't find you lel")
     return render_template('login.html', error=error)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -86,12 +107,13 @@ def register():
         bday = request.form['birthday']
 
         print(bday)
-        p1 = Player(username=request.form['name'], birthday=datetime.datetime.strptime(bday, "%Y-%m-%d").date())
+        p1 = Player(username=request.form['name'], password=request.form['password'], birthday=datetime.datetime.strptime(bday, "%Y-%m-%d").date())
         print(p1.birthday)
         db.session.add(p1)
         db.session.commit()
         return redirect(url_for('home'))
     return render_template('register.html', error=error)
+
 
 @app.route('/logout')
 def logout():
@@ -119,6 +141,7 @@ def init_dev_data():
     print("Initialized Connect 4 Database.")
 
     g = Game()
+
     db.session.add(g)
 
     p1 = Player(username="tow", birthday=datetime.datetime.strptime('11/06/1991', '%m/%d/%Y').date())
