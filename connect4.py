@@ -28,10 +28,8 @@ def home():
         newgames = [game for game in games if session['username'] == game.player_one.username or session['username'] == game.player_two.username]
         highscores = [game for game in games if game.game_over and game.winner.username == session['username']]
         highscores.sort(key=lambda game: game.turn, reverse=False)
-        communityscores = [game.turn for game in games if game.game_over]
-        communityscores.sort()
-
-
+        communityscores = [game for game in games if game.game_over]
+        communityscores.sort(key=lambda game: game.turn, reverse=False)
 
     else:
         newgames = games

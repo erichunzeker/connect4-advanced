@@ -5,21 +5,22 @@
 
 
 {% block content %}
-    <div class="community">
-
-    <h1>Community Highscores</h1>
-    {% if communityscores %}
-        <ul>
-            {% for score in communityscores %}
-                <li>{{ score }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Currently, there are no highscores</p>
-    {% endif %}
-    </div>
 
     {% if session.get('logged_in') %}
+
+        <div class="community">
+
+            <h1>Community Highscores</h1>
+            {% if communityscores %}
+                <ul>
+                    {% for game in communityscores %}
+                        <li><a href="{{ url_for('game', game_id = game.id) }}">{{ game.game_title() }}</a> - {{ game.turn }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Currently, there are no highscores</p>
+            {% endif %}
+        </div>
 
         <div class="personal">
         <h1>Personal Highscores</h1>
@@ -65,7 +66,24 @@
             <p>Currently, there are no games available to play.</p>
         {% endif %}
         </div>
+
+    {% else %}
+        <div class="community">
+
+        <h1>Community Highscores</h1>
+        {% if communityscores %}
+            <ul>
+                {% for score in communityscores %}
+                    <li>{{ score }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Currently, there are no highscores</p>
+        {% endif %}
+        </div>
+
     {% endif %}
+
 
 
 {% endblock %}
