@@ -38,22 +38,9 @@ function Connect4(p1, p2, gameId) {
         });
     }
 
-    this.makeRequest = function (method, url, data, callback) {
-            var req = new XMLHttpRequest();
-            req.onreadystatechange = function () {
-                callback(req);
-            }
-            req.open(method, url);
-            if (data) {
-                req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                req.send(data);
-            } else {
-                req.send();
-            }
-    }
 
     this.cacheGame = function() {
-        console.log(this);
+        //console.log(JSON.stringify(this));
 
         localStorage.setItem('game_' + this.gameId, JSON.stringify(this));
     }
@@ -102,8 +89,24 @@ function Connect4(p1, p2, gameId) {
                 // Update turn and turn display
                 self.turn = self.turn + 1;
                 document.getElementById('gameturn').textContent = self.turn;
+
+
+                var xhr = new XMLHttpRequest();
+                var url = "/game/" + self.gameId + "/test";
+		        xhr.open("POST", url, true);
+		        xhr.setRequestHeader('Content-Type', 'application/txt');
+		        xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 201) {
+
+                    }
+		        };
+		        console.log(JSON.stringify(self));
+		        xhr.send(JSON.stringify(self));
+
+
             }
             self.cacheGame();
+
 
 
             // If no more tokens, remove event listeners and make column unresponsive.
@@ -231,6 +234,19 @@ function Connect4(p1, p2, gameId) {
         });
 
         this.gameOver = winCondition;
+
+        var xhr = new XMLHttpRequest();
+        var url = "/game/" + self.game.gameId + "/test";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-Type', 'application/txt');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 201) {
+
+            }
+        };
+        console.log(JSON.stringify(self.game));
+        xhr.send(JSON.stringify(self.game));
+
     }
 
     this.titleWin = function() {

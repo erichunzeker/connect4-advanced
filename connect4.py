@@ -1,4 +1,4 @@
-from flask import Flask, request, session, render_template, abort, redirect, url_for, flash
+from flask import Flask, request, session, render_template, abort, redirect, url_for, flash, jsonify, json
 from models import db, Player, Game
 import datetime
 import os
@@ -23,11 +23,12 @@ db.init_app(app)
 @app.route("/")
 def home():
     games = db.session.query(Game).all()
-
+    highscores =[]
     if session.get('logged_in'):
         newgames = [game for game in games if session['username'] == game.player_one.username or session['username'] == game.player_two.username]
-        highscores = [game.turn for game in games if game.game_over and game.winner.username == session['username']]
+        highscores = [game for game in games if game.game_over and game.winner.username == session['username']]
         communityscores = [game.turn for game in games if game.game_over]
+        communityscores = communityscores.sort()
 
     else:
         newgames = games
@@ -40,7 +41,7 @@ def home():
     return render_template("landing.html", games=newgames, highscores=highscores, player=playa, communityscores=communityscores)
 
 
-@app.route("/game/<game_id>/")
+@app.route("/game/<game_id>/", methods=['GET', 'POST'])
 def game(game_id=None):
     if not session.get('logged_in'):
         abort(401)
@@ -51,6 +52,36 @@ def game(game_id=None):
     return abort(404)
 
 
+@app.route("/game/<game_id>/test", methods=['GET', 'POST'])
+def update(game_id=None):
+    if request.method == 'POST':
+        t = request.data.__str__()
+        t = t[2:t.__len__()-1]
+        obj = json.loads(t)
+
+        gameover = obj["gameOver"]
+        id = obj["gameId"]
+        turn = obj["turn"]
+        g = Game.query.filter(Game.id == id).first()
+        p1 = obj["p1"]["name"]
+        p2 = obj["p2"]["name"]
+
+        if gameover:
+            if obj["p1"]["winner"]:
+                winner = g.player_one
+            elif obj["p2"]["winner"]:
+                winner = g.player_two
+            g.game_over = True
+            g.winner = winner
+            g.turn = turn - 1
+            db.session.commit()
+
+        # print(obj)
+
+        return jsonify(request.json), 201
+
+    return abort(404)
+
 @app.route("/newgame", methods=['GET', 'POST'])
 def new_game():
     error = None
@@ -60,9 +91,6 @@ def new_game():
 
         p1 = Player.query.filter(Player.username == session['username']).first()
         p2 = Player.query.filter(Player.username == request.form['name']).first()
-
-        print(p1)
-        print(p2)
 
         g.player_one = p1
         g.player_two = p2
