@@ -27,12 +27,22 @@ def home():
     if session.get('logged_in'):
         newgames = [game for game in games if session['username'] == game.player_one.username or session['username'] == game.player_two.username]
         highscores = [game for game in games if game.game_over and game.winner.username == session['username']]
+        highscores.sort(key=lambda game: game.turn, reverse=False)
         communityscores = [game.turn for game in games if game.game_over]
-        communityscores = communityscores.sort()
+        communityscores.sort()
+
+
 
     else:
         newgames = games
         communityscores = [game.turn for game in games if game.game_over]
+        communityscores.sort()
+
+    if highscores.__len__() > 9:
+        highscores = highscores[:10]
+
+    if communityscores.__len__() > 9:
+        communityscores = communityscores[:10]
 
     if session.get('logged_in'):
         playa = session['username']
@@ -69,7 +79,7 @@ def update(game_id=None):
         if gameover:
             if obj["p1"]["winner"]:
                 winner = g.player_one
-            elif obj["p2"]["winner"]:
+            else:
                 winner = g.player_two
             g.game_over = True
             g.winner = winner
