@@ -8,10 +8,10 @@
     <div class="community">
 
     <h1>Community Highscores</h1>
-    {% if highscores %}
+    {% if communityscores %}
         <ul>
-            {% for score in highscores %}
-                <li>score</li>
+            {% for score in communityscores %}
+                <li>{{ score }}</li>
             {% endfor %}
         </ul>
     {% else %}
@@ -26,7 +26,7 @@
         {% if highscores %}
             <ul>
                 {% for score in highscores %}
-                    <li>score</li>
+                    <li>{{ score }}</li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -42,7 +42,7 @@
             <ul>
                 {% for game in games %}
                     {% if game.game_over == true %}
-                        <li><p>won</p></li>
+                        <li><a href="{{ url_for('game', game_id = game.id) }}">{{ game.game_title() }}</a> - {{ game.winner.username }} wins</li>
                     {% else %}
                     <li><a href="{{ url_for('game', game_id = game.id) }}">{{ game.game_title() }}</a>
                     {% if game.player_one.username == player %}

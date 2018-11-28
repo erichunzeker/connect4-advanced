@@ -22,20 +22,22 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    highscores = []
     games = db.session.query(Game).all()
 
     if session.get('logged_in'):
-       newgames = [game for game in games if session['username'] == game.player_one.username or session['username'] == game.player_two.username]
+        newgames = [game for game in games if session['username'] == game.player_one.username or session['username'] == game.player_two.username]
+        highscores = [game.turn for game in games if game.game_over and game.winner.username == session['username']]
+        communityscores = [game.turn for game in games if game.game_over]
+
     else:
         newgames = games
-    print(games)
+        communityscores = [game.turn for game in games if game.game_over]
 
     if session.get('logged_in'):
         playa = session['username']
     else:
         playa = None
-    return render_template("landing.html", games=newgames, highscores=highscores, player=playa)
+    return render_template("landing.html", games=newgames, highscores=highscores, player=playa, communityscores=communityscores)
 
 
 @app.route("/game/<game_id>/")
@@ -130,6 +132,7 @@ def init_db():
     db.drop_all()
     db.create_all()
 
+
     print("Initialized Connect 4 Database.")
 
 
@@ -144,8 +147,8 @@ def init_dev_data():
 
     db.session.add(g)
 
-    p1 = Player(username="tow", birthday=datetime.datetime.strptime('11/06/1991', '%m/%d/%Y').date())
-    p2 = Player(username="twaits", birthday=datetime.datetime.strptime('01/14/1987', '%m/%d/%Y').date())
+    p1 = Player(username="tow", password="a", birthday=datetime.datetime.strptime('11/06/1991', '%m/%d/%Y').date())
+    p2 = Player(username="twaits", password="a", birthday=datetime.datetime.strptime('01/14/1987', '%m/%d/%Y').date())
 
     db.session.add(p1)
     print("Created %s" % p1.username)
@@ -154,6 +157,9 @@ def init_dev_data():
 
     g.player_one = p1
     g.player_two = p2
+    g.winner = p1
+    g.turn = 8
+    g.game_over = True
 
     db.session.commit()
     print("Added dummy data.")

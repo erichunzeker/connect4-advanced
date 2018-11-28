@@ -38,7 +38,23 @@ function Connect4(p1, p2, gameId) {
         });
     }
 
+    this.makeRequest = function (method, url, data, callback) {
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                callback(req);
+            }
+            req.open(method, url);
+            if (data) {
+                req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                req.send(data);
+            } else {
+                req.send();
+            }
+    }
+
     this.cacheGame = function() {
+        console.log(this);
+
         localStorage.setItem('game_' + this.gameId, JSON.stringify(this));
     }
 
@@ -87,7 +103,6 @@ function Connect4(p1, p2, gameId) {
                 self.turn = self.turn + 1;
                 document.getElementById('gameturn').textContent = self.turn;
             }
-
             self.cacheGame();
 
 
@@ -221,13 +236,16 @@ function Connect4(p1, p2, gameId) {
     this.titleWin = function() {
         if (this.gameOver) {
             var winText = document.getElementById('title').textContent;
+            var score = 21 - this.tokensRemaining;
+
+
             if (this.p1.winner) {
                 winText = winText + ": " + this.p1.name + " Wins!";
+                //write to game winner id
             } else {
                 winText = winText + ": " + this.p2.name + " Wins!";
             }
 
-            var score = 21 - this.tokensRemaining;
 
             document.getElementById('title').textContent = winText;
         }
@@ -325,3 +343,4 @@ function Connect4(p1, p2, gameId) {
     }(this));
 
 }
+
