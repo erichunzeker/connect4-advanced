@@ -73,6 +73,7 @@ def update(game_id=None):
         g = Game.query.filter(Game.id == id).first()
         p1 = obj["p1"]["name"]
         p2 = obj["p2"]["name"]
+        g.current_state = t
 
         if gameover:
             if obj["p1"]["winner"]:
@@ -83,10 +84,22 @@ def update(game_id=None):
             g.winner = winner
             g.turn = turn - 1
             db.session.commit()
-
-        # print(obj)
-
+        else:
+            db.session.commit()
         return jsonify(request.json), 201
+
+    return abort(404)
+
+
+@app.route("/poll/<game_id>", methods=['GET', 'POST'])
+def poll(game_id=None):
+    print(request)
+    if request.method == 'GET':
+        g = Game.query.filter(Game.id == game_id).first()
+        statestring = g.current_state
+        # t = json.loads(statestring)
+        print(statestring)
+        return statestring, 200
 
     return abort(404)
 

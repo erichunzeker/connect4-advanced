@@ -22,6 +22,7 @@ function Connect4(p1, p2, gameId) {
 
     this.gameOver = false;
 
+
     this.currentPlayer = function() {
         if (this.p1.birthday > this.p2.birthday) {
             return this.turn % 2 == 0 ? this.p2 : this.p1;
@@ -53,6 +54,25 @@ function Connect4(p1, p2, gameId) {
         return function(e) {
             var el = e.currentTarget;
             var p = self.currentPlayer();
+
+            setInterval(poll, 5000);
+
+
+            function poll() {
+                setTimeout(function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.timeout = 3000;
+                    xhr.onload = function () {
+                        //console.log(xhr.response);
+                        self = JSON.parse(this.responseText);
+                        console.log(self);
+                    }
+                    xhr.open('GET', '/poll/' + self.gameId, true);
+                    xhr.send();
+                }, 5000)
+
+                localStorage.setItem('game_' + this.gameId, JSON.stringify(self));
+            }
 
             // place token
             var openCells = document.querySelectorAll('td.token-white.token[data-col="' + el.dataset.col + '"]');
@@ -100,8 +120,9 @@ function Connect4(p1, p2, gameId) {
 
                     }
 		        };
-		        console.log(JSON.stringify(self));
+		        //console.log(self);
 		        xhr.send(JSON.stringify(self));
+
 
 
             }
@@ -244,7 +265,7 @@ function Connect4(p1, p2, gameId) {
 
             }
         };
-        console.log(JSON.stringify(self.game));
+        //console.log(JSON.stringify(self.game));
         xhr.send(JSON.stringify(self.game));
 
     }
@@ -357,6 +378,8 @@ function Connect4(p1, p2, gameId) {
             document.getElementById('gameturn').textContent = self.turn;
         }
     }(this));
+
+
 
 }
 
