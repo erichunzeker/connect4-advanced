@@ -10,17 +10,20 @@ function Player(name, birthday, id, tokenBool) {
     this.winner = false;
 }
 
-function Connect4(p1, p2, gameId) {
+function Connect4(currentPlayer, p1, p2, gameId) {
 
     this.gameId = gameId ? gameId : -1;
 
     this.p1 = p1;
     this.p2 = p2;
     this.turn = 1;
+    this.currentPlayer = currentPlayer;
 
     this.tokenState = [];
 
     this.gameOver = false;
+
+
 
 
     this.currentPlayer = function() {
@@ -50,10 +53,14 @@ function Connect4(p1, p2, gameId) {
         return JSON.parse(localStorage.getItem('game_' + this.gameId));
     }
 
+
     var handleColumnClick = function(self) {
         return function(e) {
             var el = e.currentTarget;
             var p = self.currentPlayer();
+
+            //if(p.name !== currentPlayer)
+                //return;
 
             setInterval(poll, 5000);
 
@@ -65,13 +72,13 @@ function Connect4(p1, p2, gameId) {
                     xhr.onload = function () {
                         //console.log(xhr.response);
                         self = JSON.parse(this.responseText);
+                        this.tokenState = self.tokenState;
                         console.log(self);
                     }
                     xhr.open('GET', '/poll/' + self.gameId, true);
                     xhr.send();
                 }, 5000)
-
-                localStorage.setItem('game_' + this.gameId, JSON.stringify(self));
+                localStorage.setItem('game_' + self.gameId, JSON.stringify(self));
             }
 
             // place token

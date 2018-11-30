@@ -82,7 +82,7 @@ def update(game_id=None):
                 winner = g.player_two
             g.game_over = True
             g.winner = winner
-            g.turn = turn - 1
+            g.turn = turn
             db.session.commit()
         else:
             db.session.commit()

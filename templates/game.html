@@ -25,6 +25,7 @@
 var isP1First = new Date('{{game.player_one.birthday}}') < new Date('{{game.player_one.birthday}}');
 
 var game = new Connect4(
+    '{{ session['username'] }}',
     new Player('{{game.player_one.username}}', '{{game.player_one.birthday}}', parseInt('{{game.player_one.id}}'), isP1First),
     new Player('{{game.player_two.username}}', '{{game.player_two.birthday}}', parseInt('{{game.player_two.id}}'), !isP1First),
     parseInt('{{game.id}}')
