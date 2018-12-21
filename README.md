@@ -1,8 +1,5 @@
 # Connect 4 II: The Revenge-- Eric Hunzeker
 
-Name: Eric Hunzeker
-Pitt ID: emh128
-
 ## Installation
 
 1. Run `pip install -r requirements.txt` in a Python 3.7+ virtual environment
@@ -13,4 +10,3 @@ Pitt ID: emh128
 
  all of the data gets persisted to the server and then copied to local storage
  
- the polling works but i couldnt figure out how to make it update the board
